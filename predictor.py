@@ -1,22 +1,17 @@
 ### Custom definitions and classes if any ###
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler
 df=pd.read_csv('afteraddingdatafinal2.csv')
-df=df.drop('Unnamed: 0',axis=1)
-df=df.reset_index()
-df=df.drop('index',axis=1)
 X=df.iloc[:,:-1].values
-sc = StandardScaler()
-X = sc.fit_transform(X)
 y=df.iloc[:,-1].values
 from sklearn.ensemble import RandomForestRegressor
-reg = RandomForestRegressor(n_estimators=1200,
+reg = RandomForestRegressor(n_estimators=300,
                           max_depth=15,
                           min_samples_split=5,
-                          min_samples_leaf=5,
+                          min_samples_leaf=50,
                           max_features=None,
                           oob_score=True,
+                          n_jobs=-1,
                           random_state=42)
 reg.fit(X,y)
 def predictRuns(testInput):
@@ -50,6 +45,10 @@ def predictRuns(testInput):
     xyzz=0
     akk=0
     for j in abcd:
+        if "Plessis" in j:
+            j="F du Plessis"
+        elif "Kock" in j:
+            j="Q de Kock"
         for i in range(len(aaax)):
             if aaax[i][0]==j:
                 xyzz+=np.log10(i)
@@ -112,7 +111,7 @@ def predictRuns(testInput):
     if(atat==1):
         data["venue"][0]=35
     x=data.iloc[:].values
-    x = sc.transform(x)
+
         
     prediction = reg.predict(x)
 
