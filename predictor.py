@@ -1,16 +1,23 @@
 ### Custom definitions and classes if any ###
 import pandas as pd
 import numpy as np
-import warnings
-warnings.filterwarnings('ignore')
-df=pd.read_csv('afteraddingdatafinal.csv')
+from sklearn.preprocessing import StandardScaler
+df=pd.read_csv('afteraddingdatafinal2.csv')
 df=df.drop('Unnamed: 0',axis=1)
 df=df.reset_index()
 df=df.drop('index',axis=1)
 X=df.iloc[:,:-1].values
+sc = StandardScaler()
+X = sc.fit_transform(X)
 y=df.iloc[:,-1].values
-from xgboost import XGBRegressor
-reg=XGBRegressor()
+from sklearn.ensemble import RandomForestRegressor
+reg = RandomForestRegressor(n_estimators=1200,
+                          max_depth=15,
+                          min_samples_split=5,
+                          min_samples_leaf=5,
+                          max_features=None,
+                          oob_score=True,
+                          random_state=42)
 reg.fit(X,y)
 def predictRuns(testInput):
     data=pd.read_csv(testInput)
@@ -41,26 +48,23 @@ def predictRuns(testInput):
  'Rising Pune Supergiant', 'Gujarat Lions', 'Delhi Capitals']
     abcd=data['batsmen'][0].split(",")
     xyzz=0
-
+    akk=0
     for j in abcd:
         for i in range(len(aaax)):
             if aaax[i][0]==j:
                 xyzz+=np.log10(i)
                 akk=1
-            else:
-                akk=0
         if (akk==0):
             xyzz+=np.log10(len(aaax)+1)
     data['batsmen'][0]=xyzz
     efgh=data['bowlers'][0].split(",")
     zzyx=0
+    aakk=0
     for j in efgh:
         for i in range(len(aaay)):
             if aaay[i][0]==j:
                 zzyx+=np.log10(i)
                 aakk=1
-            else:
-                aakk=0
         if (aakk==0):
             zzyx+=np.log10(len(aaay)+1)
     data['bowlers'][0]=zzyx
@@ -70,20 +74,22 @@ def predictRuns(testInput):
     if data['batting_team'][0]=="Rising Pune Supergiants":
         data['batting_team'][0]="Rising Pune Supergiant"
     if "Punjab" in data["batting_team"][0]:
-        data["batting_team"][i]="Kings XI Punjab"
+        data["batting_team"][0]="Kings XI Punjab"
     if "Punjab" in data["bowling_team"][0]:
         data["bowling_team"][0]="Kings XI Punjab"
+    if "Delhi" in data["bowling_team"][0]:
+        data["bowling_team"][0]="Delhi Daredevils"
+    if "Delhi" in data["batting_team"][0]:
+        data["batting_team"][0]="Delhi Daredevils"
+    att=0
+    attt=0
     for i in range(len(aaaxyz)):
         if data["batting_team"][0]==aaaxyz[i]:
             data["batting_team"][0]=i
             att=1
-        else:
-            att=0
         if data["bowling_team"][0]==aaaxyz[i]:
             data["bowling_team"][0]=i
             attt=1
-        else:
-            attt=0
     if(att==0):
         data["batting_team"][0]=len(aaaxyz)+1
     if(attt==0):
@@ -98,23 +104,15 @@ def predictRuns(testInput):
         data['venue'][0]="MA Chidambaram Stadium"
     elif data['venue'][0]=="Rajiv Gandhi International Stadium, Uppal" or data['venue'][0]=="Rajiv Gandhi International Stadium":
         data['venue'][0]="Rajiv Gandhi International Stadium"
-    
+    atat=1
     for i in range(len(aaaz)):
         if data["venue"][0]==aaaz[i]:
             data["venue"][0]=i
             atat=0
-        else:
-            atat=1
-        if data["venue"][0]==aaaz[i]:
-            data["venue"][0]=i
-            tata=0
-        else:
-            tata=1
     if(atat==1):
-        data["venue"][0]=1
-    if(tata==1):
-        data["venue"][0]=1
+        data["venue"][0]=35
     x=data.iloc[:].values
+    x = sc.transform(x)
         
     prediction = reg.predict(x)
 
