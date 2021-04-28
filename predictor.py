@@ -1,6 +1,5 @@
 ### Custom definitions and classes if any ###
 import pandas as pd
-
 import numpy as np
 df=pd.read_csv('afteraddingdatafinal2.csv')
 X=df.iloc[:,:-1].values
